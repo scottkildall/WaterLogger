@@ -142,16 +142,19 @@ void setup() {
 
 
 void loop() {
-    checkSwitchPressed();
+  boolean switchPressed = checkSwitchPressed();
 
      // channel numbers start at 0, check wiring on the multiplexer
-     Serial.println("----------");
-     for(int i = 0; i < numSensors; i++ )
-        sensors[i].loadBasicInfo();
+     //Serial.println("----------");
+    
         
     if( status != statusRecording )
       return;
 
+    if( switchPressed ) {
+       for(int i = 0; i < numSensors; i++ )
+        sensors[i].loadBasicInfo();
+    }
     
     readGPSData();
     
