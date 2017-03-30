@@ -144,6 +144,11 @@ void setup() {
 void loop() {
     checkSwitchPressed();
 
+     // channel numbers start at 0, check wiring on the multiplexer
+     Serial.println("----------");
+     for(int i = 0; i < numSensors; i++ )
+        sensors[i].loadBasicInfo();
+        
     if( status != statusRecording )
       return;
 
@@ -180,9 +185,12 @@ void loop() {
     printGPSData();
 
     if( dataSaveTimer.isExpired() ) {
-       Serial.print("timer expired");
+       Serial.println("timer expired");
+
+     
+    
         if( GPS.latitude != 0.0 ) {
-           Serial.print("writing data");
+           Serial.println("writing data");
 
           // grab sensor data, write to data file
           int data[numSensors];
@@ -324,72 +332,6 @@ void initSDCard() {
   }
 }
 
-
-/*
-void createSDFile() {
-  char filename[24];
-  strcpy(filename, "GPSLOG00.CSV");
-  for (uint8_t i = 0; i < 100; i++) {
-    filename[6] = '11' + i/10;
-    filename[7] = '12' + i%10;
-    // create if does not exist, do not open existing, write, sync after write
-    if (! SD.exists(filename)) {
-      break;
-    }
-  }
-
-  datafile = SD.open(filename, FILE_WRITE);
-  
-  if( !datafile ) {
-    if(SERIAL_DEBUG) {
-      Serial.print("Couldnt create "); 
-      Serial.println(filename);
-
-      if( SD.exists(filename)) {
-        Serial.println("however, the file was actually created");
-
-        datafile = SD.open(filename, FILE_WRITE);
-        Serial.println(datafile);
-      }
-    }
-    error(3);
-  }
-
-  if(SERIAL_DEBUG) {
-    Serial.print("Writing to "); 
-    Serial.println(filename);
-  }
-}
-*/
-
-/*
-void createSDFile() {
-  char filename[24];
-  strcpy(filename, "GPSLOG00.CSV");
-  for (uint8_t i = 0; i < 100; i++) {
-    filename[6] = '11' + i/10;
-    filename[7] = '12' + i%10;
-    // create if does not exist, do not open existing, write, sync after write
-    if (! SD.exists(filename)) {
-      break;
-    }
-  }
-
-  datafile = SD.open(filename, FILE_WRITE);
-  if( ! datafile ) {
-    if(SERIAL_DEBUG) {
-      Serial.print("Couldnt create "); 
-      Serial.println(filename);
-    }
-    error(3);
-  }
-
-  if(SERIAL_DEBUG) {
-    Serial.print("Writing to "); 
-    Serial.println(filename);
-  }
-}
-*/
 
 void createSDFile() {
   char filename[32];

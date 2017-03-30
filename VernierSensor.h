@@ -31,7 +31,13 @@ class VernierSensor
     void tcaselect(uint8_t i);
     int getAPin();    // return analog pin (A0, A1, A2, etc that corresponds to the sensor)
 
+    void DigitalSensorID();
+    void PrintSensorInfo();
+
+    byte sensordata [128];      // could make this a static to optimize memory, if needed
+    
     int channelNum;
+    int sensorNum;
 };
 
 #endif // CLASS_Vernier_Sesnor
