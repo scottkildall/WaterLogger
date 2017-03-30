@@ -21,7 +21,17 @@
  *  Exact format of each is still in progress
  * 
  *  Lat, Long, shoud be something like: 35.655856,-105.977923
- * 
+ *  
+ *  To do:
+ *  - Clean up GPS-logger
+ *  - lat/long conversion logging
+ *  - Solder jumper wires
+ *  - Wire in Arduino breadboards
+ *  
+ *  -----------
+ *  For Mega 2560, refer here: https://learn.adafruit.com/adafruit-shield-compatibility/ultimate-gps-shield
+ *  Create a Jumper from pin 8 on the shield to RX1 on the Mega
+ *  Create a Jumper from pin 7 on the shield to TX1 on the Mega
   */
 
 #include <SPI.h>
@@ -36,15 +46,15 @@
 //-- my custom time class
 #include "MSTimer.h"
 
-//--
-//#define USE_SENSORS 
 
-#ifdef USE_SENSORS
-  #include "VernierSensor.h"
-#endif
+#include "VernierSensor.h"
 
 
-SoftwareSerial mySerial(8, 7);
+// Uno, use this
+//SoftwareSerial mySerial(8, 7);
+
+// Arduino Mega 2560, use this
+#define mySerial Serial1
 Adafruit_GPS GPS(&mySerial);
 
 // PINS
@@ -67,10 +77,9 @@ MSTimer newFileTimer;
 #define TIME_BEFORE_NEWFILE (60000 * 10)
 
 // Vernier Sensors
-#ifdef USE_SENSORS
-  #define numSensors (3)
-  VernierSensor sensors[numSensors];
-#endif
+#define numSensors (3)
+VernierSensor sensors[numSensors];
+
 
 // status of the system
 short status;
@@ -116,9 +125,7 @@ void setup() {
 
   initGPS();
 
-  #ifdef USE_SENSORS
-    initSensors();
-  #endif
+  initSensors();
   
   dataSaveTimer.setTimer(dataSaveTime);
   dataSaveTimer.start();
@@ -140,16 +147,9 @@ void loop() {
     if( status != statusRecording )
       return;
 
-    if(SERIAL_DEBUG) 
-      Serial.println("Loop - 1");
     
     readGPSData();
     
-
-    if(SERIAL_DEBUG) 
-      Serial.println("Loop - 2");
-  //-- needs to be cleaned up
-  
   // if a sentence is received, we can check the checksum, parse it...
   if (GPS.newNMEAreceived()) {
     
@@ -185,7 +185,6 @@ void loop() {
            Serial.print("writing data");
 
           // grab sensor data, write to data file
-          #ifdef USE_SENSORS
           int data[numSensors];
           for(int i = 0; i < numSensors; i++ ) {
             data[i] = sensors[i].query();
@@ -196,7 +195,6 @@ void loop() {
             Serial.print("= ");
             Serial.println(data[i]);
           }
-          #endif
           
           digitalWrite(redLEDPin, true);
           writeData();
@@ -219,10 +217,6 @@ void loop() {
     if(SERIAL_DEBUG) 
       Serial.println();
   }
-
-  
-    if(SERIAL_DEBUG) 
-      Serial.println("Loop - 3");
 }
 
 boolean checkSwitchPressed() {
@@ -440,7 +434,6 @@ void initGPS() {
   GPS.sendCommand(PGCMD_NOANTENNA);
 }
 
-#ifdef USE_SENSORS
 void initSensors() {
    // channel numbers start at 0, check wiring on the multiplexer
   for(int i = 0; i < numSensors; i++ )
@@ -450,7 +443,7 @@ void initSensors() {
   for(int i = 0; i < numSensors; i++ )
     sensors[i].loadBasicInfo();
 }
-#endif
+
 
 void readGPSData() {
   // read data from the GPS in the 'main loop'
