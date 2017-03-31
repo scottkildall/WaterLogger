@@ -11,6 +11,10 @@
 #ifndef CLASS_Vernier_Sesnor
 #define CLASS_Vernier_Sesnor
 
+#define SENSOR_NUM_PH (20)
+#define SENSOR_NUM_EC (21)
+#define SENSOR_NUM_DO (37)
+
 class VernierSensor
 {
   public:
@@ -20,10 +24,12 @@ class VernierSensor
     // call this FIRST. To avoid dynamic alloc, I have this separate accessor function, but there is no error-checking due to memory
     // constraints
     void setChannelNum(uint8_t ch);
-
+     
     // loads basic sensor info (name, etc) - usually needs only to be done once
     void loadBasicInfo();
 
+    uint8_t getSensorNum(); 
+    
     // returns analog data
     int query();
     

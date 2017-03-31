@@ -11,9 +11,7 @@
 #define TCAADDR (0x70)
 #define DEVICE (0x50)
 
-#define SENSOR_NUM_PH (20)
-#define SENSOR_NUM_EC (21)
-#define SENSOR_NUM_DO (37)
+
 
 VernierSensor::VernierSensor() {
     //Serial.print("VenierSensor constructor");
@@ -48,6 +46,12 @@ int VernierSensor::query() {
     
     return analogRead(getAPin());
 }
+
+uint8_t VernierSensor::getSensorNum()
+{ 
+  return sensorNum;
+}
+
 
 // returns A0, A1, A2 based on analog pin
 int VernierSensor::getAPin() {

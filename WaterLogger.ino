@@ -126,6 +126,8 @@ void setup() {
   initGPS();
 
   initSensors();
+
+  writeHeader();
   
   dataSaveTimer.setTimer(dataSaveTime);
   dataSaveTimer.start();
@@ -217,7 +219,7 @@ void loop() {
           }
           
           digitalWrite(redLEDPin, true);
-          writeData();
+          writeData(&data[0], numSensors);
           digitalWrite(redLEDPin, false);
         }
         
@@ -285,13 +287,23 @@ void adjustLEDs() {
   }
 }
 
-void writeData() {
+void writeData(int *data, int numData) {
   datafile.print(millis());
   datafile.print(",");
   datafile.print(GPS.latitude,8);
   datafile.print(",");
-  datafile.println(GPS.longitude,8);
+  datafile.print(GPS.longitude,8);
+  datafile.print(",");
+  datafile.print(GPS.altitude,8);
+
+  for( int i = 0; i < numData; i ++ ) {
+    datafile.print(",");
+    datafile.print( *(data+i) );
+  }
+
+  datafile.println();
   datafile.flush();
+  
 }
 void printGPSData() {
   if(SERIAL_DEBUG) {
@@ -408,6 +420,40 @@ void readGPSData() {
             Serial.print(c);
       }
     }
+}
+
+void writeHeader() {
+  
+  // 1st row = time
+  // 2nd row = latitude
+  // 3rd row = longitude
+  // 4th row = alititude
+
+  datafile.print("time, latitude, longitude, altitude");
+     
+  // write sensor numbers for next 3 rows
+  for(int i = 0; i < numSensors; i++ ) {
+      sensors[i].setChannelNum(i);
+      sensors[i].loadBasicInfo();
+      int sensorNum = sensors[i].getSensorNum();
+
+      if( sensorNum == SENSOR_NUM_PH )
+        datafile.print( ", PH");
+   
+      else if( sensorNum == SENSOR_NUM_EC )
+        datafile.print( ", EC");
+
+      else if( sensorNum == SENSOR_NUM_DO )
+        datafile.print( ", DO");
+
+       else if( sensorNum == SENSOR_NUM_DO )
+        datafile.print( ", Unknown");
+     
+    }
+
+    datafile.println();
+    datafile.flush();
+  
 }
 
 // blink out an error code on the default pin
