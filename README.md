@@ -12,5 +12,5 @@ www.kildall.com
 
 
 ### To do:
-log all sensor data
-log altitude data
+optimize
+
