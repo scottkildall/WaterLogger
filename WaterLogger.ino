@@ -206,6 +206,7 @@ void loop() {
           // grab sensor data, write to data file
           int data[numSensors];
           for(int i = 0; i < numSensors; i++ ) {
+            sensors[i].setChannelNum(i);      // some bug in channelNum, can't track it down, so we reset it each time...lame
             data[i] = sensors[i].query();
 
             //-- special-case debug until we get this sorted out

@@ -51,6 +51,9 @@ int VernierSensor::query() {
 
 // returns A0, A1, A2 based on analog pin
 int VernierSensor::getAPin() {
+  Serial.print("channel: ");
+  Serial.println(channelNum);
+  
   if( channelNum == 0 )
       return A0;
   else if( channelNum == 1 )
