@@ -148,8 +148,16 @@ void loop() {
      //Serial.println("----------");
     
         
-    if( status != statusRecording )
+    if( status != statusRecording ) {
+     
+       // channel numbers start at 0, check wiring on the multiplexer
+    for(int i = 0; i < numSensors; i++ ) {
+      sensors[i].setChannelNum(i);
+      sensors[i].loadBasicInfo();
+    }
+    delay(1000);
       return;
+    }
 
     if( switchPressed ) {
        for(int i = 0; i < numSensors; i++ )
@@ -388,7 +396,6 @@ void initSensors() {
   for(int i = 0; i < numSensors; i++ )
     sensors[i].loadBasicInfo();
 }
-
 
 void readGPSData() {
   // read data from the GPS in the 'main loop'

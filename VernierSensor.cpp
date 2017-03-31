@@ -16,18 +16,20 @@
 #define SENSOR_NUM_DO (37)
 
 VernierSensor::VernierSensor() {
-    
+    //Serial.print("VenierSensor constructor");
 }
 
-void VernierSensor::setChannelNum(int _channelNum) {
+void VernierSensor::setChannelNum(uint8_t ch) {
   Serial.print("setting channel num = ");
-  channelNum = _channelNum;
+  channelNum = ch;
   Serial.println(channelNum);
+  tcaNum = channelNum+1;
 }
 
 // loads basic sensor info (name, etc) - usually needs only to be done once
 void VernierSensor::loadBasicInfo() {
-  tcaselect(channelNum);
+  //int tcaNum = channelNum+1;
+  tcaselect(tcaNum);
    Wire.begin(); //start I2C communication
    
    DigitalSensorID();
@@ -56,13 +58,19 @@ int VernierSensor::getAPin() {
   else if( channelNum == 2 )
       return A2;
 
-  else
+  else {
     return -1;
+    Serial.println("bad APin");
+  }
 }
 
 void VernierSensor::tcaselect(uint8_t i) {
+Serial.print("tcaselect: ");
+Serial.println(i);
+
   if (i > 7) return;
- 
+
+
   Wire.beginTransmission(TCAADDR);
   Wire.write(1 << i);
   Wire.endTransmission();  
@@ -213,7 +221,7 @@ void VernierSensor::PrintSensorInfo()
   //(This code is commented out, but add it for more feedback)
    Serial.println(" "); 
    Serial.print("BTA Channel #: ");
-   Serial.println(channelNum);
+   Serial.println(tcaNum);
    Serial.print("sensor ID number: "); 
    Serial.println(sensorNum);
     

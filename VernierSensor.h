@@ -19,7 +19,7 @@ class VernierSensor
 
     // call this FIRST. To avoid dynamic alloc, I have this separate accessor function, but there is no error-checking due to memory
     // constraints
-    void setChannelNum(int _channelNum);
+    void setChannelNum(uint8_t ch);
 
     // loads basic sensor info (name, etc) - usually needs only to be done once
     void loadBasicInfo();
@@ -36,8 +36,9 @@ class VernierSensor
 
     byte sensordata [128];      // could make this a static to optimize memory, if needed
     
-    int channelNum;
-    int sensorNum;
+    uint8_t channelNum;
+    uint8_t tcaNum;
+    uint8_t sensorNum;
 };
 
 #endif // CLASS_Vernier_Sesnor
